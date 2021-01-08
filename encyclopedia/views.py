@@ -10,7 +10,7 @@ def index(request):
     })
 
 
-def title_page(request, title):
+def entry_page(request, title):
     entry = util.get_entry(title)
     if not entry:
         return render(request, "encyclopedia/not_found.html", {
