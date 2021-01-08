@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 from . import util
+from markdown import markdown
 
 
 def index(request):
@@ -8,3 +9,15 @@ def index(request):
         "entries": util.list_entries()
     })
 
+
+def title_page(request, title):
+    entry = util.get_entry(title)
+    if not entry:
+        return render(request, "encyclopedia/not_found.html", {
+            "title": title
+        })
+
+    return render(request, "encyclopedia/entry.html", {
+        "title": title.upper(),
+        "entry": markdown(entry)
+    })
