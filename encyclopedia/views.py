@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from . import util
-from markdown import markdown
+from markdown2 import markdown
 
 
 def index(request):
