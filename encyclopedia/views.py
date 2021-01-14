@@ -39,11 +39,9 @@ def search(request):
     if form.is_valid():
         query = form.cleaned_data["query"]
         entries = util.list_entries()
-        matching_entries = []
-        if query not in entries:
-            for entry in entries:
-                if query in entry.lower():
-                    matching_entries.append(entry)
+
+        if query not in (entry.lower() for entry in entries):
+            matching_entries = [entry for entry in entries if query in entry.lower()]
 
             if matching_entries:
                 return render(request, "encyclopedia/search_results.html", {
