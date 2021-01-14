@@ -10,6 +10,10 @@ from markdown2 import markdown
 class NewSearchForm(forms.Form):
     query = forms.CharField(label='Search', max_length=200)
 
+class NewCreateForm(forms.Form):
+    title = forms.CharField(label="Title", max_length=200)
+    content = forms.CharField(label="Content", widget=forms.Textarea)
+
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -55,9 +59,21 @@ def search(request):
                 })
 
         return HttpResponseRedirect(f"wiki/{query}")
+
     else:
         return render(request, "", {
             "form": NewSearchForm()
         })
 
 
+def create_entry(request):
+    if request.method == "POST":
+        form = NewCreateForm(request.POST)
+
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            content = form.cleaned_data["content"]
+
+    return render(request, "encyclopedia/create.html", {
+        "create_form": NewCreateForm()
+    })
