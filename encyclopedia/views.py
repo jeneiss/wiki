@@ -62,7 +62,7 @@ def search(request):
 
     else:
         return render(request, "", {
-            "form": NewSearchForm()
+            "form": form
         })
 
 
@@ -73,6 +73,10 @@ def create_entry(request):
         if form.is_valid():
             title = form.cleaned_data["title"]
             content = form.cleaned_data["content"]
+        else:
+            return render(request, "encyclopedia/create.html", {
+                "create_form": form
+            })
 
     return render(request, "encyclopedia/create.html", {
         "create_form": NewCreateForm()
