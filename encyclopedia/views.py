@@ -10,8 +10,13 @@ from markdown2 import markdown
 class NewSearchForm(forms.Form):
     query = forms.CharField(label='Search', max_length=200)
 
+
 class NewCreateForm(forms.Form):
     title = forms.CharField(label="Title", max_length=200)
+    content = forms.CharField(label="Content", widget=forms.Textarea)
+
+
+class NewEditForm(forms.Form):
     content = forms.CharField(label="Content", widget=forms.Textarea)
 
 
@@ -31,7 +36,7 @@ def entry_page(request, title):
         })
 
     return render(request, "encyclopedia/entry.html", {
-        "title": title.upper(),
+        "title": title,
         "entry": markdown(entry),
         "form": NewSearchForm()
     })
@@ -101,3 +106,26 @@ def create_entry(request):
     return render(request, "encyclopedia/create.html", {
         "create_form": NewCreateForm()
     })
+
+
+def edit_entry(request, title):
+    form = NewEditForm(request.POST)
+
+    if request.method == "POST":
+
+        if form.is_valid():
+            content = form.cleaned_data["content"]
+            util.save_entry(title, content)
+            return HttpResponseRedirect(f"/wiki/{title}")
+
+        else:
+            return render(request, "encyclopedia/edit.html", {
+                "edit_form": form
+            })
+
+    else:
+        entry = util.get_entry(title)
+        return render(request, "encyclopedia/edit.html", {
+            "title": title,
+            "edit_form": NewEditForm(initial={"content": entry})
+        })
