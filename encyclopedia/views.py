@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django import forms
 
 from . import util
 from markdown2 import markdown
+import random
 
 
 class NewSearchForm(forms.Form):
@@ -129,3 +129,9 @@ def edit_entry(request, title):
             "title": title,
             "edit_form": NewEditForm(initial={"content": entry})
         })
+
+
+def random_entry(request):
+    entries = util.list_entries()
+    num = random.randint(0, len(entries) - 1)
+    return HttpResponseRedirect(f"/wiki/{entries[num]}")
