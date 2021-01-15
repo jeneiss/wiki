@@ -87,8 +87,11 @@ def create_entry(request):
                         f.write(f"# {title}")
                         f.write("\n\n")
                         f.write(f"{content}")
+
+                    return HttpResponseRedirect(f"wiki/{title}")
+
                 except:
-                    print("Error opening new markdown file")
+                    print("Error opening or writing new markdown file")
 
         else:
             return render(request, "encyclopedia/create.html", {
