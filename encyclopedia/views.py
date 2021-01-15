@@ -25,8 +25,8 @@ def index(request):
 def entry_page(request, title):
     entry = util.get_entry(title)
     if not entry:
-        return render(request, "encyclopedia/not_found.html", {
-            "item": title,
+        return render(request, "encyclopedia/error.html", {
+            "error": f"{title} not found",
             "form": NewSearchForm()
         })
 
@@ -53,8 +53,8 @@ def search(request):
                     "form": NewSearchForm()
                 })
             else:
-                return render(request, "encyclopedia/not_found.html", {
-                    "item": query,
+                return render(request, "encyclopedia/error.html", {
+                    "error": f"'{query}' not found",
                     "form": NewSearchForm()
                 })
 
@@ -73,6 +73,23 @@ def create_entry(request):
         if form.is_valid():
             title = form.cleaned_data["title"]
             content = form.cleaned_data["content"]
+
+            # Check if entry already exists
+            if title in (entry.lower() for entry in util.list_entries()):
+                return render(request, "encyclopedia/error.html", {
+                    "error": f"'{title}' already exists",
+                    "form": NewSearchForm()
+                })
+            else:
+                # If doesn't exist, create markdown file
+                try:
+                    with open(f"./entries/{title}.md", "w") as f:
+                        f.write(f"# {title}")
+                        f.write("\n\n")
+                        f.write(f"{content}")
+                except:
+                    print("Error opening new markdown file")
+
         else:
             return render(request, "encyclopedia/create.html", {
                 "create_form": form
